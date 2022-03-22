@@ -30,7 +30,7 @@ export declare interface PageQueryRes<T = any> {
  * 若业务不需要捕获异常，即使出现异常也需要继续往下执行请使用unsafeGet/unsafePost等方法
  */
 export declare class LogicAxios {
-    private readonly _instance;
+    _instance: AxiosInstance;
     constructor(instance: AxiosInstance);
     get instance(): AxiosInstance;
     request<T>(config: AxiosRequestConfig): Promise<T>;

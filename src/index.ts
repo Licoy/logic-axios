@@ -38,7 +38,7 @@ export declare interface PageQueryRes<T = any> {
  */
 export class LogicAxios {
 
-    private readonly _instance: AxiosInstance
+    _instance: AxiosInstance
 
     constructor(instance: AxiosInstance) {
         this._instance = instance
