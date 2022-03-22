@@ -32,6 +32,8 @@ export declare interface PageQueryRes<T = any> {
     records: Array<T>
 }
 
+export type errorHandle = (e: any) => Promise<any>
+
 /**
  * 默认的get/post/put/patch/delete方法需要自行try/catch，否则出现异常会终止流程
  * 若业务不需要捕获异常，即使出现异常也需要继续往下执行请使用unsafeGet/unsafePost等方法
@@ -39,13 +41,23 @@ export declare interface PageQueryRes<T = any> {
 export class LogicAxios {
 
     _instance: AxiosInstance
+    private _errorHandle: errorHandle
 
-    constructor(instance: AxiosInstance) {
+    constructor(instance: AxiosInstance, errorHandle: errorHandle) {
         this._instance = instance
+        this._errorHandle = errorHandle
     }
 
     get instance(): AxiosInstance {
         return this._instance;
+    }
+
+    get errorHandle(): (e: any) => Promise<any> {
+        return this._errorHandle;
+    }
+
+    set errorHandle(value: (e: any) => Promise<any>) {
+        this._errorHandle = value;
     }
 
     request<T>(config: AxiosRequestConfig): Promise<T> {
@@ -53,13 +65,12 @@ export class LogicAxios {
     }
 
     async unsafeRequest<T = any>(r: <T = any>(path: string, data?: any, options?: AxiosRequestConfig) => Promise<T>, path: string,
-                                 data?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig) {
+                                 data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig) {
         try {
             return await r<T>(path, data, options);
         } catch (e: any) {
-            errorHandle != null ? errorHandle(e) : console.error(e)
+            return errorHandle != null ? errorHandle(e) : console.error(e)
         }
-        return false;
     }
 
     get<T = any>(path: string, params?: any, options?: AxiosRequestConfig): Promise<T> {
@@ -111,33 +122,39 @@ export class LogicAxios {
         })
     }
 
-    unsafeGet<T = any>(path: string, params?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig): Promise<T | false> {
+    unsafeGet<T = any>(path: string, params?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
         return this.unsafeRequest<T>(this.get, path, params, errorHandle, options)
     }
 
-    unsafePost<T = any>(path: string, data?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig): Promise<T | false> {
+    unsafePost<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
         return this.unsafeRequest<T>(this.post, path, data, errorHandle, options)
     }
 
-    unsafePut<T = any>(path: string, data?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig): Promise<T | false> {
+    unsafePut<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
         return this.unsafeRequest<T>(this.put, path, data, errorHandle, options)
     }
 
-    unsafePatch<T = any>(path: string, data?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig): Promise<T | false> {
+    unsafePatch<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
         return this.unsafeRequest<T>(this.patch, path, data, errorHandle, options)
     }
 
-    unsafeDelete<T = any>(path: string, params?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig): Promise<T | false> {
+    unsafeDelete<T = any>(path: string, params?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
         return this.unsafeRequest<T>(this.delete, path, params, errorHandle, options)
     }
 
 }
 
-export const createLogicAxios = (baseURL: string, timeout: number = 3000, options?: AxiosRequestConfig): LogicAxios => {
+export const createLogicAxios = (baseURL: string, timeout: number = 3000, errorHandle?: errorHandle,
+                                 options?: AxiosRequestConfig): LogicAxios => {
+    if (errorHandle == null) {
+        errorHandle = (e) => {
+            return Promise.reject(e)
+        }
+    }
     return new LogicAxios(axios.create({
         baseURL: baseURL,
         withCredentials: false,
         timeout: timeout,
         ...options
-    }))
+    }), errorHandle)
 }

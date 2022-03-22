@@ -5,11 +5,19 @@ import axios from "axios";
  */
 export class LogicAxios {
     _instance;
-    constructor(instance) {
+    _errorHandle;
+    constructor(instance, errorHandle) {
         this._instance = instance;
+        this._errorHandle = errorHandle;
     }
     get instance() {
         return this._instance;
+    }
+    get errorHandle() {
+        return this._errorHandle;
+    }
+    set errorHandle(value) {
+        this._errorHandle = value;
     }
     request(config) {
         return this._instance(config).then((response) => response.data).catch(error => (error));
@@ -19,9 +27,8 @@ export class LogicAxios {
             return await r(path, data, options);
         }
         catch (e) {
-            errorHandle != null ? errorHandle(e) : console.error(e);
+            return errorHandle != null ? errorHandle(e) : console.error(e);
         }
-        return false;
     }
     get(path, params, options) {
         return this.request({
@@ -82,12 +89,17 @@ export class LogicAxios {
         return this.unsafeRequest(this.delete, path, params, errorHandle, options);
     }
 }
-export const createLogicAxios = (baseURL, timeout = 3000, options) => {
+export const createLogicAxios = (baseURL, timeout = 3000, errorHandle, options) => {
+    if (errorHandle == null) {
+        errorHandle = (e) => {
+            return Promise.reject(e);
+        };
+    }
     return new LogicAxios(axios.create({
         baseURL: baseURL,
         withCredentials: false,
         timeout: timeout,
         ...options
-    }));
+    }), errorHandle);
 };
 //# sourceMappingURL=index.js.map

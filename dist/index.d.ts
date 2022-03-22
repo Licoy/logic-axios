@@ -25,26 +25,30 @@ export declare interface PageQueryRes<T = any> {
     pages: number;
     records: Array<T>;
 }
+export declare type errorHandle = (e: any) => Promise<any>;
 /**
  * 默认的get/post/put/patch/delete方法需要自行try/catch，否则出现异常会终止流程
  * 若业务不需要捕获异常，即使出现异常也需要继续往下执行请使用unsafeGet/unsafePost等方法
  */
 export declare class LogicAxios {
     _instance: AxiosInstance;
-    constructor(instance: AxiosInstance);
+    private _errorHandle;
+    constructor(instance: AxiosInstance, errorHandle: errorHandle);
     get instance(): AxiosInstance;
+    get errorHandle(): (e: any) => Promise<any>;
+    set errorHandle(value: (e: any) => Promise<any>);
     request<T>(config: AxiosRequestConfig): Promise<T>;
-    unsafeRequest<T = any>(r: <T = any>(path: string, data?: any, options?: AxiosRequestConfig) => Promise<T>, path: string, data?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig): Promise<false | T>;
+    unsafeRequest<T = any>(r: <T = any>(path: string, data?: any, options?: AxiosRequestConfig) => Promise<T>, path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<any>;
     get<T = any>(path: string, params?: any, options?: AxiosRequestConfig): Promise<T>;
     page(path: string, params?: PageQuery, options?: AxiosRequestConfig): Promise<PageQueryRes>;
     post<T = any>(path: string, data?: any, options?: AxiosRequestConfig): Promise<T>;
     put<T = any>(path: string, data?: any, options?: AxiosRequestConfig): Promise<T>;
     patch<T = any>(path: string, data?: any, options?: AxiosRequestConfig): Promise<T>;
     delete<T = any>(path: string, params?: any, options?: AxiosRequestConfig): Promise<T>;
-    unsafeGet<T = any>(path: string, params?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig): Promise<T | false>;
-    unsafePost<T = any>(path: string, data?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig): Promise<T | false>;
-    unsafePut<T = any>(path: string, data?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig): Promise<T | false>;
-    unsafePatch<T = any>(path: string, data?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig): Promise<T | false>;
-    unsafeDelete<T = any>(path: string, params?: any, errorHandle?: (e: any) => void, options?: AxiosRequestConfig): Promise<T | false>;
+    unsafeGet<T = any>(path: string, params?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void>;
+    unsafePost<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void>;
+    unsafePut<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void>;
+    unsafePatch<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void>;
+    unsafeDelete<T = any>(path: string, params?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void>;
 }
-export declare const createLogicAxios: (baseURL: string, timeout?: number, options?: AxiosRequestConfig<any> | undefined) => LogicAxios;
+export declare const createLogicAxios: (baseURL: string, timeout?: number, errorHandle?: errorHandle | undefined, options?: AxiosRequestConfig<any> | undefined) => LogicAxios;
