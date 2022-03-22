@@ -45,6 +45,7 @@ export declare class LogicAxios {
     put<T = any>(path: string, data?: any, options?: AxiosRequestConfig): Promise<T>;
     patch<T = any>(path: string, data?: any, options?: AxiosRequestConfig): Promise<T>;
     delete<T = any>(path: string, params?: any, options?: AxiosRequestConfig): Promise<T>;
+    unsafeCatch(e: any, errorHandle?: errorHandle): void | Promise<any>;
     unsafeGet<T = any>(path: string, params?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void>;
     unsafePost<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void>;
     unsafePut<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void>;

@@ -122,31 +122,55 @@ export class LogicAxios {
         })
     }
 
-    unsafeGet<T = any>(path: string, params?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
-        return this.unsafeRequest<T>(this.get, path, params, errorHandle, options)
+    unsafeCatch(e: any, errorHandle?: errorHandle) {
+        return errorHandle != null ? errorHandle(e) : console.error(e)
     }
 
-    unsafePost<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
-        return this.unsafeRequest<T>(this.post, path, data, errorHandle, options)
+    async unsafeGet<T = any>(path: string, params?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
+        try {
+            return await this.get(path, params, options);
+        } catch (e: any) {
+            return this.unsafeCatch(e, errorHandle)
+        }
     }
 
-    unsafePut<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
-        return this.unsafeRequest<T>(this.put, path, data, errorHandle, options)
+    async unsafePost<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
+        try {
+            return await this.post(path, data, options);
+        } catch (e: any) {
+            return this.unsafeCatch(e, errorHandle)
+        }
     }
 
-    unsafePatch<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
-        return this.unsafeRequest<T>(this.patch, path, data, errorHandle, options)
+    async unsafePut<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
+        try {
+            return await this.put(path, data, options);
+        } catch (e: any) {
+            return this.unsafeCatch(e, errorHandle)
+        }
     }
 
-    unsafeDelete<T = any>(path: string, params?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
-        return this.unsafeRequest<T>(this.delete, path, params, errorHandle, options)
+    async unsafePatch<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
+        try {
+            return await this.patch(path, data, options);
+        } catch (e: any) {
+            return this.unsafeCatch(e, errorHandle)
+        }
+    }
+
+    async unsafeDelete<T = any>(path: string, params?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
+        try {
+            return await this.delete(path, params, options);
+        } catch (e: any) {
+            return this.unsafeCatch(e, errorHandle)
+        }
     }
 
 }
 
 export const createLogicAxios = (baseURL: string, timeout: number = 3000, errorHandle?: errorHandle,
                                  options?: AxiosRequestConfig): LogicAxios => {
-    if (errorHandle == null) {
+    if (!errorHandle) {
         errorHandle = (e) => {
             return Promise.reject(e)
         }

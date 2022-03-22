@@ -73,24 +73,52 @@ export class LogicAxios {
             params: params
         });
     }
-    unsafeGet(path, params, errorHandle, options) {
-        return this.unsafeRequest(this.get, path, params, errorHandle, options);
+    unsafeCatch(e, errorHandle) {
+        return errorHandle != null ? errorHandle(e) : console.error(e);
     }
-    unsafePost(path, data, errorHandle, options) {
-        return this.unsafeRequest(this.post, path, data, errorHandle, options);
+    async unsafeGet(path, params, errorHandle, options) {
+        try {
+            return await this.get(path, params, options);
+        }
+        catch (e) {
+            return this.unsafeCatch(e, errorHandle);
+        }
     }
-    unsafePut(path, data, errorHandle, options) {
-        return this.unsafeRequest(this.put, path, data, errorHandle, options);
+    async unsafePost(path, data, errorHandle, options) {
+        try {
+            return await this.post(path, data, options);
+        }
+        catch (e) {
+            return this.unsafeCatch(e, errorHandle);
+        }
     }
-    unsafePatch(path, data, errorHandle, options) {
-        return this.unsafeRequest(this.patch, path, data, errorHandle, options);
+    async unsafePut(path, data, errorHandle, options) {
+        try {
+            return await this.put(path, data, options);
+        }
+        catch (e) {
+            return this.unsafeCatch(e, errorHandle);
+        }
     }
-    unsafeDelete(path, params, errorHandle, options) {
-        return this.unsafeRequest(this.delete, path, params, errorHandle, options);
+    async unsafePatch(path, data, errorHandle, options) {
+        try {
+            return await this.patch(path, data, options);
+        }
+        catch (e) {
+            return this.unsafeCatch(e, errorHandle);
+        }
+    }
+    async unsafeDelete(path, params, errorHandle, options) {
+        try {
+            return await this.delete(path, params, options);
+        }
+        catch (e) {
+            return this.unsafeCatch(e, errorHandle);
+        }
     }
 }
 export const createLogicAxios = (baseURL, timeout = 3000, errorHandle, options) => {
-    if (errorHandle == null) {
+    if (!errorHandle) {
         errorHandle = (e) => {
             return Promise.reject(e);
         };
