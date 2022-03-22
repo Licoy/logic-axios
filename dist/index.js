@@ -20,15 +20,12 @@ export class LogicAxios {
         this._errorHandle = value;
     }
     request(config) {
-        return this._instance(config).then((response) => response.data).catch(error => (error));
-    }
-    async unsafeRequest(r, path, data, errorHandle, options) {
-        try {
-            return await r(path, data, options);
-        }
-        catch (e) {
-            return errorHandle != null ? errorHandle(e) : console.error(e);
-        }
+        return this._instance(config).then((response) => response.data).catch(error => {
+            if (this._errorHandle !== undefined) {
+                return this._errorHandle(error);
+            }
+            return Promise.reject(error);
+        });
     }
     get(path, params, options) {
         return this.request({
@@ -74,7 +71,11 @@ export class LogicAxios {
         });
     }
     unsafeCatch(e, errorHandle) {
-        return errorHandle != null ? errorHandle(e) : console.error(e);
+        if (errorHandle !== undefined) {
+            return errorHandle(e);
+        }
+        console.error(e);
+        return e;
     }
     async unsafeGet(path, params, errorHandle, options) {
         try {

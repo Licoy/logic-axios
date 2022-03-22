@@ -1,6 +1,6 @@
 {
   "name": "logic-axios",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "a logic axios request encapsulation",
   "main": "dist/index.js",
   "scripts": {

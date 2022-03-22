@@ -38,14 +38,13 @@ export declare class LogicAxios {
     get errorHandle(): (e: any) => Promise<any>;
     set errorHandle(value: (e: any) => Promise<any>);
     request<T>(config: AxiosRequestConfig): Promise<T>;
-    unsafeRequest<T = any>(r: <T = any>(path: string, data?: any, options?: AxiosRequestConfig) => Promise<T>, path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<any>;
     get<T = any>(path: string, params?: any, options?: AxiosRequestConfig): Promise<T>;
     page(path: string, params?: PageQuery, options?: AxiosRequestConfig): Promise<PageQueryRes>;
     post<T = any>(path: string, data?: any, options?: AxiosRequestConfig): Promise<T>;
     put<T = any>(path: string, data?: any, options?: AxiosRequestConfig): Promise<T>;
     patch<T = any>(path: string, data?: any, options?: AxiosRequestConfig): Promise<T>;
     delete<T = any>(path: string, params?: any, options?: AxiosRequestConfig): Promise<T>;
-    unsafeCatch(e: any, errorHandle?: errorHandle): void | Promise<any>;
+    unsafeCatch(e: any, errorHandle?: errorHandle): any;
     unsafeGet<T = any>(path: string, params?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void>;
     unsafePost<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void>;
     unsafePut<T = any>(path: string, data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void>;

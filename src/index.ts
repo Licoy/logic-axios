@@ -62,10 +62,10 @@ export class LogicAxios {
 
     request<T>(config: AxiosRequestConfig): Promise<T> {
         return this._instance(config).then((response: AxiosResponse) => response.data).catch(error => {
-            if (this._errorHandle != undefined) {
+            if (this._errorHandle !== undefined) {
                 return this._errorHandle(error)
             }
-            return error
+            return Promise.reject(error)
         });
     }
 
@@ -119,10 +119,8 @@ export class LogicAxios {
     }
 
     unsafeCatch(e: any, errorHandle?: errorHandle) {
-        if (errorHandle != undefined) {
+        if (errorHandle !== undefined) {
             return errorHandle(e)
-        } else if (this._errorHandle != undefined) {
-            return this._errorHandle(e)
         }
         console.error(e)
         return e
