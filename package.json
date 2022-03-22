@@ -1,0 +1,32 @@
+{
+  "name": "logic-axios",
+  "version": "1.0.0",
+  "description": "a logic axios request encapsulation",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "tsc --build --clean",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "logic",
+    "axios",
+    "logic-axios",
+    "simple",
+    "simple-axios"
+  ],
+  "homepage": "https://github.com/Licoy/logic-axios",
+  "bugs": {
+    "url": "https://github.com/Licoy/logic-axios/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Licoy/logic-axios.git"
+  },
+  "author": "Licoy",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "tslib": "^2.3.1"
+  }
+}
