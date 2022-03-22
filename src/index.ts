@@ -61,16 +61,12 @@ export class LogicAxios {
     }
 
     request<T>(config: AxiosRequestConfig): Promise<T> {
-        return this._instance(config).then((response: AxiosResponse) => response.data).catch(error => (error));
-    }
-
-    async unsafeRequest<T = any>(r: <T = any>(path: string, data?: any, options?: AxiosRequestConfig) => Promise<T>, path: string,
-                                 data?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig) {
-        try {
-            return await r<T>(path, data, options);
-        } catch (e: any) {
-            return errorHandle != null ? errorHandle(e) : console.error(e)
-        }
+        return this._instance(config).then((response: AxiosResponse) => response.data).catch(error => {
+            if (this._errorHandle != undefined) {
+                return this._errorHandle(error)
+            }
+            return error
+        });
     }
 
     get<T = any>(path: string, params?: any, options?: AxiosRequestConfig): Promise<T> {
@@ -123,7 +119,13 @@ export class LogicAxios {
     }
 
     unsafeCatch(e: any, errorHandle?: errorHandle) {
-        return errorHandle != null ? errorHandle(e) : console.error(e)
+        if (errorHandle != undefined) {
+            return errorHandle(e)
+        } else if (this._errorHandle != undefined) {
+            return this._errorHandle(e)
+        }
+        console.error(e)
+        return e
     }
 
     async unsafeGet<T = any>(path: string, params?: any, errorHandle?: errorHandle, options?: AxiosRequestConfig): Promise<T | void> {
